@@ -130,5 +130,6 @@ func (f *Factory) GetAuth() map[string]string {
 	}
 	f.WebTokenUsed = false
 	header := map[string]string{"Authorization": "Basic " + f.UserAuthToken}
+	header = map[string]string{"X-CUSTOM-AUTH": f.CustomAuthToken}
 	return header
 }

@@ -84,6 +84,7 @@ func (o *Opts) GetRunner(cmd *cobra.Command, _ []string) {
 
 func (o *Opts) GetApps() {
 	headers := o.F.GetAuth()
+	headers["X-CUSTOM-AUTH"] = o.F.CustomAuthToken // added this line
 	reqConfig := defaults.GetAppsList(o.F, map[string]interface{}{"headers": headers})
 	reqConfig.URL = strings.ReplaceAll(reqConfig.URL, "<:id>", o.ProjectID)
 
@@ -99,6 +100,7 @@ func (o *Opts) GetApps() {
 
 func (o *Opts) GetSingleApplication(appID string) {
 	headers := o.F.GetAuth()
+	headers["X-CUSTOM-AUTH"] = o.F.CustomAuthToken // added this line
 	reqConfig := defaults.GetSingleApplication(o.F, map[string]interface{}{"headers": headers})
 	reqConfig.URL = strings.ReplaceAll(reqConfig.URL, "<:id>", appID)
 	res := reqConfig.Request()
