@@ -6,6 +6,7 @@ import (
 	"github.com/berrybytes/zocli/pkg/cmd/auth/logout"
 	"github.com/berrybytes/zocli/pkg/cmd/auth/status"
 	"github.com/berrybytes/zocli/pkg/utils/factory"
+	"github.com/berrybytes/zocli/pkg/utils/auth0"
 
 	"github.com/spf13/cobra"
 )
@@ -22,6 +23,14 @@ import (
 // If there is an error running the help command, it prints the error message to the console.
 // It returns the created "auth" command.
 func NewAuthCommand(f *factory.Factory) *cobra.Command {
+	// Retrieve Auth0 access token before any auth subcommand runs
+    token, err := auth0.GetAccessToken()
+    if err != nil {
+        f.Printer.Errorf("Failed to get Auth0 token: %v", err)
+    } else {
+        f.CustomAuthToken = token // Store in factory for later use
+    }
+
 	auth := &cobra.Command{
 		Use:     "auth",
 		Short:   "Authenticates a user",

@@ -21,6 +21,8 @@ import (
 // along with all other default fields
 // and then, will be transferred to all the sub-command
 type Factory struct {
+	// Custom Auth Token for the user
+	CustomAuthToken string 
 	// determines the verbose mode of the CLI
 	Verbose bool
 	// determines the quiet mode of the CLI
@@ -128,5 +130,6 @@ func (f *Factory) GetAuth() map[string]string {
 	}
 	f.WebTokenUsed = false
 	header := map[string]string{"Authorization": "Basic " + f.UserAuthToken}
+	header = map[string]string{"X-CUSTOM-AUTH": f.CustomAuthToken}
 	return header
 }

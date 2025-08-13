@@ -43,3 +43,4 @@ Sessionx.vim
 tags
 [._]*.un~
 dist/
+.env
