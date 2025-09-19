@@ -2,9 +2,13 @@ package factory
 
 import (
 	"context"
+	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"runtime"
+
+	"gopkg.in/yaml.v3"
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/berrybytes/zocli/internal/browser"
@@ -13,6 +17,7 @@ import (
 	"github.com/berrybytes/zocli/pkg/utils/printer"
 	"github.com/berrybytes/zocli/pkg/utils/terminal"
 	cliBrowser "github.com/cli/browser"
+	// "github.com/sirupsen/logrus"
 )
 
 // Factory
@@ -59,6 +64,7 @@ type Factory struct {
 
 	Debug   printer.DebugInterface
 	Printer printer.PrinterInterface
+	Auth0Token string
 }
 
 type FactoryInterface interface {
@@ -67,6 +73,9 @@ type FactoryInterface interface {
 	CleanUpTest()
 }
 
+type MyConfig struct {
+	Auth0Token string `yaml:"auth0_token"`
+}
 // New
 //
 // creates a new factory instance.
@@ -120,13 +129,73 @@ func (f *Factory) CleanUpTest() {
 	}
 }
 
-func (f *Factory) GetAuth() map[string]string {
-	if f.UserWebToken != "" {
-		header := map[string]string{"X-PERSONAL-TOKEN": f.UserWebToken}
-		f.WebTokenUsed = true
-		return header
+// func (f *Factory) GetAuth() map[string]string {
+// 	if f.UserWebToken != "" {
+// 		header := map[string]string{"X-PERSONAL-TOKEN": f.UserWebToken}
+// 		f.WebTokenUsed = true
+// 		return header
+// 	}
+// 	f.WebTokenUsed = false
+// 	header := map[string]string{"Authorization": "Basic " + f.UserAuthToken,"X-CUSTOM-AUTH": f.Auth0Token }
+// 	return header
+// }
+
+// func GetAuth0Token() string {
+// 	filename := os.Getenv("CONFIG_FILE")
+// 	if filename == "" {
+// 		log.Fatal("CONFIG_FILE environment variable is not set")
+// 	}
+
+// 	data, err := os.ReadFile(filename)
+// 	if err != nil {
+// 		log.Fatalf("error reading YAML file: %v", err)
+// 	}
+
+// 	var cfg MyConfig
+// 	if err := yaml.Unmarshal(data, &cfg); err != nil {
+// 		log.Fatalf("error unmarshalling YAML: %v", err)
+// 	}
+// 	log.Printf(cfg.Auth0Token)
+
+// 	// returns just the value like: xxx
+// 	return cfg.Auth0Token
+// }
+
+func GetAuth0Token() string {
+    filename := os.Getenv("CONFIG_FILE")
+    if filename == "" {
+        log.Fatal("CONFIG_FILE environment variable is not set")
 	}
-	f.WebTokenUsed = false
-	header := map[string]string{"Authorization": "Basic " + f.UserAuthToken}
-	return header
+
+    data, err := os.ReadFile(filename)
+    if err != nil {
+        log.Fatalf("error reading YAML file: %v", err)
+    }
+
+    var cfg MyConfig
+    if err := yaml.Unmarshal(data, &cfg); err != nil {
+        log.Fatalf("error unmarshalling YAML: %v", err)
+    }
+
+    // Only return the token string, not the whole struct or any timestamp
+	var token string = cfg.Auth0Token
+
+	fmt.Println(token)
+
+    return token
+}
+
+func (f *Factory) GetAuth() map[string]string {
+    if f.UserWebToken != "" {
+        header := map[string]string{"X-PERSONAL-TOKEN": f.UserWebToken}
+        f.WebTokenUsed = true
+        return header
+    }
+    f.WebTokenUsed = false
+	fmt.Printf("Auth0 Token: %s\n", GetAuth0Token())
+    header := map[string]string{
+        "Authorization": "Basic " + f.UserAuthToken,
+        "X-CUSTOM-AUTH": GetAuth0Token(),    
+		}
+    return header
 }

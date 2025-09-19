@@ -13,12 +13,14 @@ func Load() *Routes {
 
 	frontEndBase := os.Getenv("CLI_FRONT_BASE")
 	if frontEndBase == "" {
-		frontEndBase = "https://console.01cloud.io/"
+		frontEndBase = "https://console.test.01cloud.dev/"
 	}
+	// export CLI_BASE_URL="https://api-gateway.test.01cloud.dev/cli/"
+	// export CLI_FRONT_BASE="https://console.test.01cloud.dev/"
 
 	baseURL := os.Getenv("CLI_BASE_URL")
 	if baseURL == "" {
-		baseURL = "https://api.01cloud.io/"
+		baseURL = "https://api-gateway.test.01cloud.dev/"
 	}
 
 	// login routes

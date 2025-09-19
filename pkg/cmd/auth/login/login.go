@@ -33,6 +33,7 @@ type Opts struct {
 	LoginResponse *api.LoginResponse
 	Response      []byte
 	cmd           *cobra.Command
+	Auth0Token    string
 }
 
 // SaveConfig
@@ -43,6 +44,7 @@ type SaveConfig struct {
 	AuthToken string `yaml:"token"`
 	ID        int    `yaml:"id"`
 	WebToken  string `yaml:"xpersonaltoken"`
+	Auth0Token string `yaml:"auth0_token"`
 }
 
 // NewLoginCommand
@@ -109,12 +111,15 @@ func (l *Opts) saveDetails() error {
 	if err != nil {
 		return err
 	}
+	defer f.Close()
+
 
 	var save SaveConfig
 	save.Email = l.LoginResponse.Data.User.Email
 	save.AuthToken = l.LoginResponse.Data.AuthToken
 	save.ID = l.LoginResponse.Data.User.Id
 	save.WebToken = l.LoginResponse.WebToken
+	save.Auth0Token = l.Auth0Token
 
 	yamlF, err := yaml.Marshal(save)
 	if err != nil {
