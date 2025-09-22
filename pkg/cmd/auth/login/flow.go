@@ -13,20 +13,11 @@ func (l *Opts) flow() error {
 		l.F.Printer.Printf("It is not recommended to use credentaials on cli..")
 		return l.LoginWithToken()
 
-	case l.Email != "":
-		return l.askCreds()
-
-	case l.Password != "":
-		return l.askCreds()
-
 	case l.WithToken:
 		return l.webTokenFlow()
 
 	case l.WithBrowser:
 		return l.browserFlow()
-
-	case l.WithCreds:
-		return l.credsFlow()
 
 	default:
 		return l.ask()
@@ -37,7 +28,6 @@ func (l *Opts) ask() error {
 	options := []string{
 		"SSO : Login with browser using 01Cloud SSO (Single Sign On) Token",
 		"Token : Login using pre-created token",
-		"Basic : Login using email and password",
 		"Help : Print the help menu",
 	}
 	var qs = []*survey.Question{
@@ -69,8 +59,6 @@ func (l *Opts) ask() error {
 		return l.browserFlow()
 	case strings.Contains(answers.LoginOption, "Token"):
 		return l.webTokenFlow()
-	case strings.Contains(answers.LoginOption, "Basic"):
-		return l.credsFlow()
 	case strings.Contains(answers.LoginOption, "H"):
 		return l.cmd.Help()
 	default:
