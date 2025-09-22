@@ -168,7 +168,7 @@ func (l *Opts) gotCodeStatus(baseRes *api.BaseResponse) {
 	var orgSwitch api.OrganizationSwitch
 	err = orgSwitch.FromJson(res.Data)
 	l.LoginResponse.AuthToken = orgSwitch.Token
-	l.F.UserAuthToken = orgSwitch.Token // Update Factory with new token
+	l.F.UserAuthToken = orgSwitch.Token
 	if err != nil {
 		l.F.Printer.Fatal(9, "cannot unmarshal")
 		return
@@ -181,63 +181,6 @@ func (l *Opts) gotCodeStatus(baseRes *api.BaseResponse) {
 		return
 	}
 }
-
-// func (l *Opts) gotCodeStatus(baseRes *api.BaseResponse) {
-//     var data api.Data
-//     // Temporary workaround for map[token:<token>] response
-//     if dataStr, ok := baseRes.Data.(string); ok && strings.HasPrefix(dataStr, "map[token:") {
-//         token := strings.TrimPrefix(dataStr, "map[token:")
-//         token = strings.TrimSuffix(token, "]")
-//         // Create a JSON-compatible structure
-//         jsonData := fmt.Sprintf(`{"authToken": "%s"}`, token)
-//         err := data.FromJson(jsonData)
-//         if err != nil {
-//             l.F.Printer.Fatal(9, err.Error())
-//         }
-//     } else {
-//         err := data.FromJson(baseRes.Data)
-//         if err != nil {
-//             l.F.Printer.Fatal(9, err.Error())
-//         }
-//     }
-
-//     headers := map[string]string{"Authorization": "basic " + data.AuthToken}
-//     reqConf := defaults.Profile(l.F, map[string]interface{}{"headers": headers})
-
-//     res := reqConf.Request()
-//     var profile api.ProfileResponse
-//     err := profile.FromJson(res.Data)
-//     if err != nil {
-//         l.F.Printer.Fatal(9, err)
-//     }
-
-//     l.LoginResponse = &api.LoginResponse{
-//         Data: api.Data{
-//             User: api.User{
-//                 Id:    profile.User.Id,
-//                 Email: profile.User.Email,
-//             },
-//         },
-//     }
-
-//     // Switch organization
-//     reqConf = defaults.SwitchOrganization(l.F, map[string]interface{}{"headers": headers})
-//     reqConf.URL = strings.ReplaceAll(reqConf.URL, "<:id>", "0")
-//     res = reqConf.Request()
-//     var orgSwitch api.OrganizationSwitch
-//     err = orgSwitch.FromJson(res.Data)
-//     l.LoginResponse.AuthToken = orgSwitch.Token
-//     if err != nil {
-//         l.F.Printer.Fatal(9, "cannot unmarshal")
-//         return
-//     }
-
-//     err = l.saveDetails()
-//     if err != nil {
-//         l.F.Printer.Fatal(10, err)
-//         return
-//     }
-// }
 
 // requestSSOCode
 //
