@@ -9,13 +9,6 @@ import (
 
 func (l *Opts) flow() error {
 	switch {
-	case l.WebToken != "":
-		l.F.Printer.Printf("It is not recommended to use credentaials on cli..")
-		return l.LoginWithToken()
-
-	case l.WithToken:
-		return l.webTokenFlow()
-
 	case l.WithBrowser:
 		return l.browserFlow()
 
@@ -27,7 +20,6 @@ func (l *Opts) flow() error {
 func (l *Opts) ask() error {
 	options := []string{
 		"SSO : Login with browser using 01Cloud SSO (Single Sign On) Token",
-		"Token : Login using pre-created token",
 		"Help : Print the help menu",
 	}
 	var qs = []*survey.Question{
@@ -57,8 +49,6 @@ func (l *Opts) ask() error {
 	switch {
 	case strings.Contains(answers.LoginOption, "SSO"):
 		return l.browserFlow()
-	case strings.Contains(answers.LoginOption, "Token"):
-		return l.webTokenFlow()
 	case strings.Contains(answers.LoginOption, "H"):
 		return l.cmd.Help()
 	default:

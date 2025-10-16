@@ -153,9 +153,6 @@ func (f *Factory) loadAuthFromDisk() error {
 	if cfg.AuthToken != "" {
 		f.UserAuthToken = cfg.AuthToken
 	}
-	if cfg.WebToken != "" {
-		f.UserWebToken = cfg.WebToken
-	}
 	if cfg.Email != "" {
 		f.UserEmail = cfg.Email
 	}
@@ -163,11 +160,6 @@ func (f *Factory) loadAuthFromDisk() error {
 }
 
 func (f *Factory) GetAuth() map[string]string {
-	if f.UserWebToken != "" {
-		header := map[string]string{"X-PERSONAL-TOKEN": f.UserWebToken}
-		f.WebTokenUsed = true
-		return header
-	}
 	f.WebTokenUsed = false
 
 	// Ensure tokens are loaded from disk if not already present in Factory

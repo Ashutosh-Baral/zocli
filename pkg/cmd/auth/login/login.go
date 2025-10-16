@@ -12,7 +12,6 @@ import (
 	"github.com/berrybytes/zocli/pkg/utils/globalparser"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 	"gopkg.in/yaml.v3"
 )
 
@@ -59,20 +58,9 @@ func NewLoginCommand(f *factory.Factory) *cobra.Command {
 		RunE:                  opts.checkArgs,
 	}
 
-	login.PersistentFlags().BoolVarP(&opts.WithToken, "token", "t", false, "BOOL Auth token for your account")
 	login.PersistentFlags().BoolVarP(&opts.WithBrowser, "sso", "s", false, "use browser to login")
 
-	// add a new flag set but mark it as hidden
-	// as this approach is not recommended
-	newToken := pflag.NewFlagSet("not recommended", pflag.ExitOnError)
-	newToken.StringVarP(&opts.WebToken, "tokenVal", "T", "", "Token")
-
-	newToken.VisitAll(func(flag *pflag.Flag) {
-		flag.Hidden = true
-	})
-
 	login.Example = grammar.LoginExample
-	login.Flags().AddFlagSet(newToken)
 	opts.cmd = login
 	return login
 }
